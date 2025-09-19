@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: credit-simulator:latest
+    container_name: creditsimulator
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
