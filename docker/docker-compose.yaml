@@ -1,5 +1,8 @@
 version: "3.9"
 
+networks:
+  monitoring:
+
 services:
   app:
     build:
@@ -10,32 +13,60 @@ services:
     ports:
       - "8080:8080"
     restart: unless-stopped
-    
+    networks:
+      - monitoring
+
+  postgres:
+    image: postgres:15
+    container_name: credit_simulator_postgres
+    environment:
+      POSTGRES_USER: credit_user
+      POSTGRES_PASSWORD: credit_pass
+      POSTGRES_DB: credit_simulator
+    networks:
+      - monitoring
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data 
+
   k6:
     image: grafana/k6
-    container_name: k6
     volumes:
       - ./scripts:/scripts
+    command: run /scripts/load_testing_bulk.js
+    depends_on:
+      - influxdb
+      - app
     environment:
-      - K6_OUT=influxdb=http://influxdb:8086/k6
-    command: run /scripts/script.js
+      - K6_OUT=influxdb=http://influxdb:8086/k6_credit_simulator
+    networks:
+      - monitoring
 
   influxdb:
     image: influxdb:1.8
     container_name: influxdb
     ports:
       - "8086:8086"
-    volumes:
-      - influxdb_data:/var/lib/influxdb
+    environment:
+      - INFLUXDB_DB=k6_credit_simulator
+    networks:
+      - monitoring
 
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:latest
     container_name: grafana
     ports:
       - "3000:3000"
     volumes:
-      - grafana_data:/var/lib/grafana
+      - ./grafana:/etc/grafana/provisioning/
+    depends_on:
+      - influxdb
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - monitoring
 
 volumes:
-  influxdb_data:
-  grafana_data:
+  postgres_data:

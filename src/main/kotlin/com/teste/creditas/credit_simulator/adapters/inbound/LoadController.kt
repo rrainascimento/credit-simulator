@@ -42,7 +42,7 @@ class LoanController(
     suspend fun simulateBulk(@RequestBody requests: List<LoanSimulationRequest>): List<LoanSimulationResponse> =
         coroutineScope {
             requests.map { request ->
-                async { loanSimulationService.simulate(request) }
+                async { loanSimulationService.simulateBulk(request) }
             }.awaitAll()
         }
 

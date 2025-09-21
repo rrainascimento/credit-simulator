@@ -1,23 +1,20 @@
 package com.teste.creditas.credit_simulator.domain.service
 
+import com.teste.creditas.credit_simulator.aplication.service.port.SimulationRepositoryPort
 import com.teste.creditas.credit_simulator.domain.model.LoanSimulationRequest
 import com.teste.creditas.credit_simulator.domain.model.LoanSimulationResponse
+import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.time.Period
 import kotlin.math.pow
 
-class LoanCalculator {
+@Component
+class LoanCalculator(private val simulationRepositoryPort: SimulationRepositoryPort){
 
     fun calculate(request: LoanSimulationRequest): LoanSimulationResponse {
         val age = Period.between(request.birthDate, LocalDate.now()).years
 
-        val annualRate = when {
-            age <= 25 -> 0.05
-            age in 26..40 -> 0.03
-            age in 41..60 -> 0.02
-            else -> 0.04
-        }
-
+        val annualRate = simulationRepositoryPort.getLoanRateByAge(age)
         val monthlyRate = annualRate / 12
         val n = request.months
         val pv = request.loanAmount

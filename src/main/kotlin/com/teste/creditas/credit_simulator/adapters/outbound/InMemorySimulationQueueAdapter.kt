@@ -1,4 +1,4 @@
-package com.teste.creditas.credit_simulator.adapters.inbound.outbound
+package com.teste.creditas.credit_simulator.adapters.outbound
 
 import com.teste.creditas.credit_simulator.aplication.service.port.SimulationQueuePort
 import com.teste.creditas.credit_simulator.domain.model.LoanSimulationRequest
