@@ -14,7 +14,13 @@ class LoanCalculator(private val simulationRepositoryPort: SimulationRepositoryP
     fun calculate(request: LoanSimulationRequest): LoanSimulationResponse {
         val age = Period.between(request.birthDate, LocalDate.now()).years
 
-        val annualRate = simulationRepositoryPort.getLoanRateByAge(age)
+        val annualRate = when {
+            age <= 25 -> 0.05
+            age in 26..40 -> 0.03
+            age in 41..60 -> 0.02
+            else -> 0.04
+        }
+
         val monthlyRate = annualRate / 12
         val n = request.months
         val pv = request.loanAmount

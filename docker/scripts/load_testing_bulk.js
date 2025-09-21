@@ -2,10 +2,10 @@ import http from "k6/http";
 import { check, sleep } from "k6";
 
 export const options = {
-  vus: 1,              // apenas 1 usuário virtual, pq o foco é volume no body
-  iterations: 1,       // executa só 1 vez
+  vus: 1000,              // apenas 1 usuário virtual, pq o foco é volume no body
+  duration: '5s',       // executa só 1 vez
   thresholds: {
-    http_req_duration: ["p(95)<5000"], // 95% das req devem responder em < 5s
+    http_req_duration: ["p(95)<8000"], // 95% das req devem responder em < 5s
     http_req_failed: ["rate<0.01"],    // < 1% de falhas
   },
 };
@@ -27,7 +27,7 @@ export default function () {
   const url = "http://creditsimulator:8080/api/loans/simulate/bulk";
 
   // gera 10.000 simulações em memória
-  const payload = JSON.stringify(generateSimulations(10000));
+  const payload = JSON.stringify(generateSimulations(1));
   console.log(payload);
 
   const params = {

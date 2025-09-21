@@ -5,5 +5,4 @@ import com.teste.creditas.credit_simulator.domain.model.LoanSimulationResponse
 
 interface SimulationRepositoryPort {
     fun saveSimulation(request: LoanSimulationRequest, response: LoanSimulationResponse)
-    fun getLoanRateByAge(age: Int): Double
 }

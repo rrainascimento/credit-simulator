@@ -33,6 +33,18 @@ class LoanController(
         return loanSimulationService.simulate(request)
     }
 
+    @PostMapping("/simulate/bulk/sync")
+    @Operation(
+        summary = "Simula múltiplos empréstimos sem paralelismo",
+        description = "Recebe uma lista de requisições e retorna os resultados de todas as simulações."
+    )
+    @ApiResponse(responseCode = "200", description = "Simulação realizada com sucesso")
+    fun simulateLoanBulkSync(@RequestBody requests: List<LoanSimulationRequest>): List<LoanSimulationResponse> {
+        return requests.map { request ->
+            loanSimulationService.simulateBulk(request)
+        }
+    }
+
     @PostMapping("/simulate/bulk")
     @Operation(
         summary = "Simula múltiplos empréstimos em paralelo",
