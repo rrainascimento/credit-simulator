@@ -17,4 +17,6 @@ data class InterestRateEntity(
 
     @Column(name = "annual_rate", nullable = false)
     var annualRate: Double
-)
+){
+constructor() : this( 0, 0, 0.0)
+}

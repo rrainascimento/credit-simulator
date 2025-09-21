@@ -80,8 +80,6 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-
-
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -111,7 +109,6 @@
 					</args>
 					<compilerPlugins>
 						<plugin>spring</plugin>
-                        <plugin>jpa</plugin>
 					</compilerPlugins>
 				</configuration>
 				<dependencies>
