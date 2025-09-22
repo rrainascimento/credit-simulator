@@ -80,6 +80,27 @@ Essa separação promove **alta coesão, baixo acoplamento** e facilita mudança
 
 ---
 
+## 📡 Cenário de Mensageria - Fluxo Assíncrono
+
+1. **Cliente → API**
+    - O usuário chama `POST /simulate/async`.
+    - A API valida a requisição, grava `status = PENDING` no banco e publica a mensagem no broker.
+
+2. **Broker (Kafka/SQS)**
+    - Garante que a mensagem será entregue.
+    - Suporta múltiplos consumidores (escalabilidade).
+
+3. **Worker de Simulação**
+    - Consome mensagens do broker.
+    - Executa o motor de cálculo.
+    - Atualiza o banco com o resultado (`status = COMPLETED`).
+    - Opcionalmente dispara o evento `simulation.completed`.
+
+4. **Notificação ao Cliente**
+    - Pode ser **pull** (cliente consulta `GET /simulate/{id}`) ou **push** (webhook, WebSocket, e-mail).
+
+---
+
 # ⚙️ Setup e Configuração do Projeto
 
 ## ✅ Requisitos
@@ -249,7 +270,19 @@ Para parar:
 ```bash
 docker-compose -f docker/docker-compose.yml down
 ```
+## 📖 Documentação da API
 
+A documentação interativa da API está disponível em:
+
+- [Swagger UI](http://localhost:8080/swagger-ui.html)
+- [OpenAPI JSON](http://localhost:8080/v3/api-docs)
+
+## 🚀 Como acessar a documentação
+
+Após iniciar a aplicação, a documentação estará disponível em:
+
+- Swagger UI: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+- Esquema OpenAPI (JSON): [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
 ---
 
 ## 🧪 Testes de Carga (Alto Volume)
@@ -257,12 +290,68 @@ docker-compose -f docker/docker-compose.yml down
 * Os **scripts do k6** estão em: `docker/scripts/load_testing_bulk.js`
 * Configuração de **monitoramento** com Grafana + InfluxDB.
 
-### Cenário de Mensageria (exemplo real)
+Rode o comando do docker compose do k6 para rodar o teste de carga
 
-* O endpoint `simulate/async` poderia enviar cada simulação para um **broker** (Kafka ou SQS).
-* Serviços consumidores processariam as simulações em background.
-* O usuário poderia consultar o status ou receber notificações quando o cálculo estiver pronto.
+```bash
+docker compose up k6 -d
+```
+
+## 📊 Visualização do Dashboard no Grafana
+
+* O Grafana estará rodando na porta **:3000** após subir os containers.
+* Acesse o painel em [http://localhost:3000](http://localhost:3000) com usuário e senha padrão:  
+  **usuário:** `admin`  
+  **senha:** `admin`
+  > Obs: será necessário definir uma nova senha no primeiro login.
 
 ---
 
+### 🔧 Configuração Inicial
+
+1. **Criar a conexão com o InfluxDB**
+    - Vá até **Configuration → Data Sources**.
+    - Clique em **Add data source**.
+    - Selecione **InfluxDB**.
+    - Configure os campos principais:
+        - **URL:** `http://influxdb:8086`  
+          (ou `http://localhost:8086` se o Grafana estiver rodando fora do Docker)
+        - **Database:** `k6`
+        - **User:** `admin` (se configurado)
+        - **Password:** `admin` (se configurado)
+    - Clique em **Save & Test** para validar a conexão.
+
+2. **Importar o Dashboard de Load Testing**
+    - Vá até **Create → Import** no menu lateral do Grafana.
+    - No campo **Import via grafana.com**, insira o ID do dashboard:  
+      **2587**  
+      ou acesse direto: [k6 Load Testing Results](https://grafana.com/grafana/dashboards/2587-k6-load-testing-results/).
+    - Clique em **Load**.
+    - Escolha o **Data Source** criado (InfluxDB).
+    - Clique em **Import** para finalizar.
+
+3. **Explorar os resultados**
+    - Após rodar os testes com o k6, os dados serão enviados automaticamente para o InfluxDB.
+    - O dashboard importado mostrará métricas de:
+        - VUs ativos (Virtual Users)
+        - Taxa de requisições por segundo
+        - Latência (p95, p99)
+        - Erros e falhas durante o teste
+
+---
+
+✅ Agora o Grafana exibirá em tempo real os resultados de carga gerados pelo k6, facilitando o acompanhamento e análise de performance.
+
+
+## 🏗️ Tecnologias Utilizadas
+
+- **Kotlin + Spring Boot** → desenvolvimento da API e dos consumidores (workers).
+- **PostgreSQL** → persistência de simulações e resultados.
+- **Grafana + InfluxDB** → observabilidade e visualização de métricas de execução.
+- **Grafana k6** → testes de carga e performance integrados ao pipeline.
+- **ktlint** → verificação automática de estilo e formatação do código Kotlin.
+- **Detekt** → análise estática para detectar potenciais problemas e más práticas em Kotlin.
+
+
 ## ❤️ Desenvolvido com Kotlin + Spring Boot
+
+[![Swagger](https://img.shields.io/badge/API%20Docs-Swagger-green)](http://localhost:8080/swagger-ui.html)
