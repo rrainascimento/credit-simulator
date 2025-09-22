@@ -1,9 +1,9 @@
 package com.teste.creditas.credit_simulator.aplication.service
 
 import com.teste.creditas.credit_simulator.aplication.service.port.EmailSenderPort
-import org.junit.jupiter.api.Assertions.*
 import com.teste.creditas.credit_simulator.domain.model.LoanSimulationRequest
 import com.teste.creditas.credit_simulator.domain.model.LoanSimulationResponse
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
@@ -11,7 +11,6 @@ import org.mockito.kotlin.argumentCaptor
 import java.time.LocalDate
 
 class NotificationServiceTest {
-
     private lateinit var emailSenderPort: EmailSenderPort
     private lateinit var notificationService: NotificationService
 
@@ -23,18 +22,20 @@ class NotificationServiceTest {
 
     @Test
     fun `sendSimulationResult should send email with correct content`() {
-        val request = LoanSimulationRequest(
-            loanAmount = 15000.0,
-            birthDate = LocalDate.of(1995, 8, 20),
-            months = 36,
-            name = "Rai Nascimento",
-            email = "rai.nascimento@email.com"
-        )
-        val response = LoanSimulationResponse(
-            totalPayment = 16500.0,
-            monthlyPayment = 1500.0,
-            totalInterest = 1500.0
-        )
+        val request =
+            LoanSimulationRequest(
+                loanAmount = 15000.0,
+                birthDate = LocalDate.of(1995, 8, 20),
+                months = 36,
+                name = "Rai Nascimento",
+                email = "rai.nascimento@email.com",
+            )
+        val response =
+            LoanSimulationResponse(
+                totalPayment = 16500.0,
+                monthlyPayment = 1500.0,
+                totalInterest = 1500.0,
+            )
 
         // Chama o método
         notificationService.sendSimulationResult(request, response)
@@ -51,7 +52,7 @@ class NotificationServiceTest {
             subjectCaptor.capture(),
             bodyCaptor.capture(),
             attachmentCaptor.capture(),
-            fileNameCaptor.capture()
+            fileNameCaptor.capture(),
         )
 
         // Valida argumentos capturados

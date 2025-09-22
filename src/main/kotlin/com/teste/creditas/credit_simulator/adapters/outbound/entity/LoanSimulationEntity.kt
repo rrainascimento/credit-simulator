@@ -14,5 +14,5 @@ data class LoanSimulationEntity(
     val months: Int,
     val totalPayment: Double,
     val monthlyPayment: Double,
-    val totalInterest: Double
+    val totalInterest: Double,
 )

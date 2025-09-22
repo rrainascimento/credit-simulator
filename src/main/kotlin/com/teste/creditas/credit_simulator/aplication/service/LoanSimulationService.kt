@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 class LoanSimulationService(
     private val loanCalculator: LoanCalculator,
     private val simulationRepository: SimulationRepositoryPort,
-    private val notificationService: NotificationService
+    private val notificationService: NotificationService,
 ) {
     fun simulate(request: LoanSimulationRequest): LoanSimulationResponse {
         val response = loanCalculator.calculate(request)

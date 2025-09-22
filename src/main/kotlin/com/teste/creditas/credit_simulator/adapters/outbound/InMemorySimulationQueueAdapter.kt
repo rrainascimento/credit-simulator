@@ -6,8 +6,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 @Component
-class InMemorySimulationQueueAdapter: SimulationQueuePort {
-
+class InMemorySimulationQueueAdapter : SimulationQueuePort {
     private val logger = LoggerFactory.getLogger(InMemorySimulationQueueAdapter::class.java)
 
     override fun enqueueSimulations(requests: List<LoanSimulationRequest>) {

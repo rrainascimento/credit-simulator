@@ -6,8 +6,9 @@ import com.teste.creditas.credit_simulator.domain.model.LoanSimulationResponse
 object EmailBodyBuilder {
     fun buildSimulationSummary(
         request: LoanSimulationRequest,
-        response: LoanSimulationResponse
-    ): String = """
+        response: LoanSimulationResponse,
+    ): String =
+        """
         Olá, ${request.name}, tudo bem?
         
         Aqui está o resultado da sua simulação de crédito:
@@ -17,5 +18,5 @@ object EmailBodyBuilder {
         Prazo: ${request.months} meses
         Parcela mensal: R$ ${"%.2f".format(response.monthlyPayment)}
         Total de juros: R$ ${"%.2f".format(response.totalInterest)}
-    """.trimIndent()
+        """.trimIndent()
 }

@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class CreditSimulatorApplication
 
 fun main(args: Array<String>) {
-	runApplication<CreditSimulatorApplication>(*args)
+    runApplication<CreditSimulatorApplication>(*args)
 }

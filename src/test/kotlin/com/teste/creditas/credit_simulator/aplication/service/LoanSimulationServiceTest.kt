@@ -16,7 +16,6 @@ import org.mockito.kotlin.whenever
 import java.time.LocalDate
 
 class LoanSimulationServiceTest {
-
     private lateinit var loanCalculator: LoanCalculator
     private lateinit var simulationRepository: SimulationRepositoryPort
     private lateinit var notificationService: NotificationService
@@ -33,13 +32,14 @@ class LoanSimulationServiceTest {
 
     @Test
     fun `simulate should calculate, save and send notification`() {
-        val request = LoanSimulationRequest(
-            loanAmount = 15000.0,
-            months = 36,
-            birthDate = LocalDate.of(1995, 8, 20),
-            name = "Rai Nascimento",
-            email = "rai.nascimento@email.com"
-        )
+        val request =
+            LoanSimulationRequest(
+                loanAmount = 15000.0,
+                months = 36,
+                birthDate = LocalDate.of(1995, 8, 20),
+                name = "Rai Nascimento",
+                email = "rai.nascimento@email.com",
+            )
         val expectedResponse = LoanSimulationResponse(15000.0, 1500.0, 16500.0)
 
         whenever(loanCalculator.calculate(request)).thenReturn(expectedResponse)
@@ -61,13 +61,14 @@ class LoanSimulationServiceTest {
 
     @Test
     fun `simulateBulk should calculate and return response without saving or notifying`() {
-        val request = LoanSimulationRequest(
-            loanAmount = 20000.0,
-            months = 24,
-            birthDate = LocalDate.of(1990, 5, 5),
-            name = "Ana Silva",
-            email = "ana.silva@email.com"
-        )
+        val request =
+            LoanSimulationRequest(
+                loanAmount = 20000.0,
+                months = 24,
+                birthDate = LocalDate.of(1990, 5, 5),
+                name = "Ana Silva",
+                email = "ana.silva@email.com",
+            )
         val expectedResponse = LoanSimulationResponse(20000.0, 2000.0, 22000.0)
 
         whenever(loanCalculator.calculate(request)).thenReturn(expectedResponse)

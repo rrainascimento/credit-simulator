@@ -8,7 +8,6 @@ import org.springframework.mock.env.MockEnvironment
 import kotlin.test.assertFailsWith
 
 class SendGridEmailAdapterTest {
-
     private lateinit var mockWebServer: MockWebServer
     private lateinit var emailAdapter: SendGridEmailAdapter
 
@@ -23,23 +22,31 @@ class SendGridEmailAdapterTest {
         val client = OkHttpClient()
 
         // Substituímos a URL padrão pelo mock
-        emailAdapter = object : SendGridEmailAdapter(env) {
-            override fun sendEmail(to: String, subject: String, body: String, attachment: ByteArray?, fileName: String?) {
-                val requestBody = SendGridRequestBuilder.buildSendGridRequest(to, subject, body, false, attachment, fileName)
+        emailAdapter =
+            object : SendGridEmailAdapter(env) {
+                override fun sendEmail(
+                    to: String,
+                    subject: String,
+                    body: String,
+                    attachment: ByteArray?,
+                    fileName: String?,
+                ) {
+                    val requestBody = SendGridRequestBuilder.buildSendGridRequest(to, subject, body, false, attachment, fileName)
 
-                val request = okhttp3.Request.Builder()
-                    .url(mockWebServer.url("/v3/mail/send")) // <-- mock server endpoint
-                    .addHeader("Authorization", "Bearer fake-api-key")
-                    .post(requestBody)
-                    .build()
+                    val request =
+                        okhttp3.Request.Builder()
+                            .url(mockWebServer.url("/v3/mail/send")) // <-- mock server endpoint
+                            .addHeader("Authorization", "Bearer fake-api-key")
+                            .post(requestBody)
+                            .build()
 
-                client.newCall(request).execute().use { response ->
-                    if (!response.isSuccessful) {
-                        throw RuntimeException("Erro ao enviar email: ${response.code} - ${response.body?.string()}")
+                    client.newCall(request).execute().use { response ->
+                        if (!response.isSuccessful) {
+                            throw RuntimeException("Erro ao enviar email: ${response.code} - ${response.body?.string()}")
+                        }
                     }
                 }
             }
-        }
     }
 
     @AfterEach
@@ -55,7 +62,7 @@ class SendGridEmailAdapterTest {
         emailAdapter.sendEmail(
             to = "teste@dominio.com",
             subject = "Assunto de Teste",
-            body = "Corpo do email"
+            body = "Corpo do email",
         )
 
         val recordedRequest = mockWebServer.takeRequest()
@@ -73,7 +80,7 @@ class SendGridEmailAdapterTest {
             emailAdapter.sendEmail(
                 to = "teste@dominio.com",
                 subject = "Erro",
-                body = "Teste erro"
+                body = "Teste erro",
             )
         }
     }
