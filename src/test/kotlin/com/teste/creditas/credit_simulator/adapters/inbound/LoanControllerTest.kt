@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
 import java.time.LocalDate
+import java.math.BigDecimal
 
 class LoanControllerTest {
     private lateinit var loanSimulationService: LoanSimulationService
@@ -27,15 +28,19 @@ class LoanControllerTest {
 
     @Test
     fun `simulateLoan should return simulation result`() {
-        val request =
-            LoanSimulationRequest(
-                loanAmount = 15000.0,
-                months = 36,
-                birthDate = LocalDate.of(1995, 8, 20),
-                name = "Rai Nascimento",
-                email = "rai.nascimento@email.com",
-            )
-        val expectedResponse = LoanSimulationResponse(15000.0, 1500.0, 16500.0)
+        val request = LoanSimulationRequest(
+            loanAmount = 15000.0,
+            months = 36,
+            birthDate = LocalDate.of(1995, 8, 20),
+            name = "Rai Nascimento",
+            email = "rai.nascimento@email.com",
+        )
+
+        val expectedResponse = LoanSimulationResponse(
+            totalPayment = BigDecimal("16500.00"),
+            monthlyPayment = BigDecimal("1500.00"),
+            totalInterest = BigDecimal("1500.00")
+        )
 
         `when`(loanSimulationService.simulate(request)).thenReturn(expectedResponse)
 
@@ -47,28 +52,35 @@ class LoanControllerTest {
 
     @Test
     fun `simulateLoanBulkSync should return list of responses`() {
-        val requests =
-            listOf(
-                LoanSimulationRequest(
-                    loanAmount = 15000.0,
-                    months = 36,
-                    birthDate = LocalDate.of(1995, 8, 20),
-                    name = "Rai Nascimento",
-                    email = "rai.nascimento@email.com",
-                ),
-                LoanSimulationRequest(
-                    loanAmount = 20000.0,
-                    months = 24,
-                    birthDate = LocalDate.of(1990, 5, 5),
-                    name = "Ana Silva",
-                    email = "ana.silva@email.com",
-                ),
-            )
-        val responses =
-            listOf(
-                LoanSimulationResponse(15000.0, 1500.0, 16500.0),
-                LoanSimulationResponse(20000.0, 2000.0, 22000.0),
-            )
+        val requests = listOf(
+            LoanSimulationRequest(
+                loanAmount = 15000.0,
+                months = 36,
+                birthDate = LocalDate.of(1995, 8, 20),
+                name = "Rai Nascimento",
+                email = "rai.nascimento@email.com",
+            ),
+            LoanSimulationRequest(
+                loanAmount = 20000.0,
+                months = 24,
+                birthDate = LocalDate.of(1990, 5, 5),
+                name = "Ana Silva",
+                email = "ana.silva@email.com",
+            ),
+        )
+
+        val responses = listOf(
+            LoanSimulationResponse(
+                totalPayment = BigDecimal("16500.00"),
+                monthlyPayment = BigDecimal("1500.00"),
+                totalInterest = BigDecimal("1500.00")
+            ),
+            LoanSimulationResponse(
+                totalPayment = BigDecimal("22000.00"),
+                monthlyPayment = BigDecimal("2000.00"),
+                totalInterest = BigDecimal("2000.00")
+            ),
+        )
 
         for (i in requests.indices) {
             `when`(loanSimulationService.simulateBulk(requests[i])).thenReturn(responses[i])
@@ -83,62 +95,67 @@ class LoanControllerTest {
     }
 
     @Test
-    fun `simulateBulk should return list of responses in parallel`() =
-        runBlocking {
-            val requests =
-                listOf(
-                    LoanSimulationRequest(
-                        loanAmount = 15000.0,
-                        months = 36,
-                        birthDate = LocalDate.of(1995, 8, 20),
-                        name = "Rai Nascimento",
-                        email = "rai.nascimento@email.com",
-                    ),
-                    LoanSimulationRequest(
-                        loanAmount = 20000.0,
-                        months = 24,
-                        birthDate = LocalDate.of(1990, 5, 5),
-                        name = "Ana Silva",
-                        email = "ana.silva@email.com",
-                    ),
-                )
-            val responses =
-                listOf(
-                    LoanSimulationResponse(15000.0, 1500.0, 16500.0),
-                    LoanSimulationResponse(20000.0, 2000.0, 22000.0),
-                )
+    fun `simulateBulk should return list of responses in parallel`() = runBlocking {
+        val requests = listOf(
+            LoanSimulationRequest(
+                loanAmount = 15000.0,
+                months = 36,
+                birthDate = LocalDate.of(1995, 8, 20),
+                name = "Rai Nascimento",
+                email = "rai.nascimento@email.com",
+            ),
+            LoanSimulationRequest(
+                loanAmount = 20000.0,
+                months = 24,
+                birthDate = LocalDate.of(1990, 5, 5),
+                name = "Ana Silva",
+                email = "ana.silva@email.com",
+            ),
+        )
 
-            for (i in requests.indices) {
-                `when`(loanSimulationService.simulateBulk(requests[i])).thenReturn(responses[i])
-            }
+        val responses = listOf(
+            LoanSimulationResponse(
+                totalPayment = BigDecimal("16500.00"),
+                monthlyPayment = BigDecimal("1500.00"),
+                totalInterest = BigDecimal("1500.00")
+            ),
+            LoanSimulationResponse(
+                totalPayment = BigDecimal("22000.00"),
+                monthlyPayment = BigDecimal("2000.00"),
+                totalInterest = BigDecimal("2000.00")
+            ),
+        )
 
-            val result = controller.simulateBulk(requests)
-
-            assertEquals(responses, result)
-            for (request in requests) {
-                verify(loanSimulationService).simulateBulk(request)
-            }
+        for (i in requests.indices) {
+            `when`(loanSimulationService.simulateBulk(requests[i])).thenReturn(responses[i])
         }
+
+        val result = controller.simulateBulk(requests)
+
+        assertEquals(responses, result)
+        for (request in requests) {
+            verify(loanSimulationService).simulateBulk(request)
+        }
+    }
 
     @Test
     fun `simulateAsync should enqueue simulations`() {
-        val requests =
-            listOf(
-                LoanSimulationRequest(
-                    loanAmount = 15000.0,
-                    months = 36,
-                    birthDate = LocalDate.of(1995, 8, 20),
-                    name = "Rai Nascimento",
-                    email = "rai.nascimento@email.com",
-                ),
-                LoanSimulationRequest(
-                    loanAmount = 20000.0,
-                    months = 24,
-                    birthDate = LocalDate.of(1990, 5, 5),
-                    name = "Ana Silva",
-                    email = "ana.silva@email.com",
-                ),
-            )
+        val requests = listOf(
+            LoanSimulationRequest(
+                loanAmount = 15000.0,
+                months = 36,
+                birthDate = LocalDate.of(1995, 8, 20),
+                name = "Rai Nascimento",
+                email = "rai.nascimento@email.com",
+            ),
+            LoanSimulationRequest(
+                loanAmount = 20000.0,
+                months = 24,
+                birthDate = LocalDate.of(1990, 5, 5),
+                name = "Ana Silva",
+                email = "ana.silva@email.com",
+            ),
+        )
 
         controller.simulateAsync(requests)
 

@@ -4,9 +4,11 @@ import com.teste.creditas.credit_simulator.aplication.service.port.SimulationRep
 import com.teste.creditas.credit_simulator.domain.model.LoanSimulationRequest
 import com.teste.creditas.credit_simulator.domain.model.LoanSimulationResponse
 import org.springframework.stereotype.Component
+import java.math.BigDecimal
+import java.math.MathContext
+import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.Period
-import kotlin.math.pow
 
 @Component
 class LoanCalculator(private val simulationRepositoryPort: SimulationRepositoryPort) {
@@ -14,35 +16,35 @@ class LoanCalculator(private val simulationRepositoryPort: SimulationRepositoryP
     fun calculate(request: LoanSimulationRequest): LoanSimulationResponse {
         val age = Period.between(request.birthDate, LocalDate.now()).years
 
-        val annualRate =
-            when {
-                age <= 25 -> 0.05
-                age in 26..40 -> 0.03
-                age in 41..60 -> 0.02
-                else -> 0.04
-            }
+        val annualRate = when {
+            age <= 25 -> BigDecimal("0.05")
+            age in 26..40 -> BigDecimal("0.03")
+            age in 41..60 -> BigDecimal("0.02")
+            else -> BigDecimal("0.04")
+        }
 
-        val monthlyRate = annualRate / 12
-        val n = request.months
-        val pv = request.loanAmount
+        val monthlyRate = annualRate.divide(BigDecimal(12), 10, RoundingMode.HALF_EVEN)
+        val n = BigDecimal(request.months)
+        val pv = BigDecimal(request.loanAmount)
 
-        // Fórmula PMT = PV * r / (1 - (1+r)^-n)
-        val monthlyPayment =
-            if (monthlyRate == 0.0) {
-                pv / n
-            } else {
-                pv * (monthlyRate / (1 - (1 + monthlyRate).pow(-n)))
-            }
+        val monthlyPayment = if (monthlyRate.compareTo(BigDecimal.ZERO) == 0) {
+            pv.divide(n, 2, RoundingMode.HALF_EVEN)
+        } else {
+            // Fórmula PMT = PV * r / (1 - (1+r)^-n)
+            val onePlusR = BigDecimal.ONE + monthlyRate
+            val denominator = BigDecimal.ONE - onePlusR.pow(-request.months, MathContext.DECIMAL128)
+            pv.multiply(monthlyRate)
+                .divide(denominator, 10, RoundingMode.HALF_EVEN)
+                .setScale(2, RoundingMode.HALF_EVEN)
+        }
 
-        val totalPayment = monthlyPayment * n
-        val totalInterest = totalPayment - pv
+        val totalPayment = monthlyPayment.multiply(n).setScale(2, RoundingMode.HALF_EVEN)
+        val totalInterest = totalPayment.subtract(pv).setScale(2, RoundingMode.HALF_EVEN)
 
         return LoanSimulationResponse(
-            totalPayment = round2(totalPayment),
-            monthlyPayment = round2(monthlyPayment),
-            totalInterest = round2(totalInterest),
+            totalPayment = totalPayment,
+            monthlyPayment = monthlyPayment,
+            totalInterest = totalInterest
         )
     }
-
-    private fun round2(value: Double): Double = kotlin.math.round(value * 100) / 100
 }

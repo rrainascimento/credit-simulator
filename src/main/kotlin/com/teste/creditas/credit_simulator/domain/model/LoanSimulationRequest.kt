@@ -1,6 +1,7 @@
 package com.teste.creditas.credit_simulator.domain.model
 
 import io.swagger.v3.oas.annotations.media.Schema
+import java.math.BigDecimal
 import java.time.LocalDate
 
 @Schema(description = "Requisição para simulação de empréstimo")
@@ -38,15 +39,15 @@ data class LoanSimulationResponse(
         description = "Valor total a ser pago ao final do empréstimo",
         example = "18000.00",
     )
-    val totalPayment: Double,
+    val totalPayment: BigDecimal,
     @Schema(
         description = "Valor da parcela mensal",
         example = "500.00",
     )
-    val monthlyPayment: Double,
+    val monthlyPayment: BigDecimal,
     @Schema(
         description = "Total de juros pagos ao longo do empréstimo",
         example = "3000.00",
     )
-    val totalInterest: Double,
+    val totalInterest: BigDecimal,
 )

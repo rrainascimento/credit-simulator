@@ -3,14 +3,18 @@ package com.teste.creditas.credit_simulator.aplication.service
 import com.teste.creditas.credit_simulator.aplication.service.port.EmailSenderPort
 import com.teste.creditas.credit_simulator.domain.model.LoanSimulationRequest
 import com.teste.creditas.credit_simulator.domain.model.LoanSimulationResponse
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.*
 import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import java.math.BigDecimal
 import java.time.LocalDate
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class NotificationServiceTest {
+
     private lateinit var emailSenderPort: EmailSenderPort
     private lateinit var notificationService: NotificationService
 
@@ -22,20 +26,19 @@ class NotificationServiceTest {
 
     @Test
     fun `sendSimulationResult should send email with correct content`() {
-        val request =
-            LoanSimulationRequest(
-                loanAmount = 15000.0,
-                birthDate = LocalDate.of(1995, 8, 20),
-                months = 36,
-                name = "Rai Nascimento",
-                email = "rai.nascimento@email.com",
-            )
-        val response =
-            LoanSimulationResponse(
-                totalPayment = 16500.0,
-                monthlyPayment = 1500.0,
-                totalInterest = 1500.0,
-            )
+        val request = LoanSimulationRequest(
+            loanAmount = 15000.0,
+            birthDate = LocalDate.of(1995, 8, 20),
+            months = 36,
+            name = "Rai Nascimento",
+            email = "rai.nascimento@email.com",
+        )
+
+        val response = LoanSimulationResponse(
+            totalPayment = BigDecimal("16500.00"),
+            monthlyPayment = BigDecimal("1500.00"),
+            totalInterest = BigDecimal("1500.00"),
+        )
 
         // Chama o método
         notificationService.sendSimulationResult(request, response)

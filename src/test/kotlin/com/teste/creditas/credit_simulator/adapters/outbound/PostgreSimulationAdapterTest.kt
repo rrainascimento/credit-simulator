@@ -9,11 +9,12 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito.*
+import java.math.BigDecimal
 import java.time.LocalDate
-import kotlin.jvm.java
 import kotlin.test.assertEquals
 
 class PostgreSimulationAdapterTest {
+
     private lateinit var repository: LoanSimulationJpaRepository
     private lateinit var adapter: SimulationRepositoryPort
 
@@ -25,20 +26,19 @@ class PostgreSimulationAdapterTest {
 
     @Test
     fun `saveSimulation should map request and response to entity and save`() {
-        val request =
-            LoanSimulationRequest(
-                loanAmount = 10000.0,
-                months = 12,
-                birthDate = LocalDate.of(2000, 1, 1),
-                name = "Teste User",
-                email = "teste@email.com",
-            )
-        val response =
-            LoanSimulationResponse(
-                totalPayment = 11000.0,
-                monthlyPayment = 916.67,
-                totalInterest = 1000.0,
-            )
+        val request = LoanSimulationRequest(
+            loanAmount = 10000.0,
+            months = 12,
+            birthDate = LocalDate.of(2000, 1, 1),
+            name = "Teste User",
+            email = "teste@email.com",
+        )
+
+        val response = LoanSimulationResponse(
+            totalPayment = BigDecimal("11000.00"),
+            monthlyPayment = BigDecimal("916.67"),
+            totalInterest = BigDecimal("1000.00"),
+        )
 
         val captor = ArgumentCaptor.forClass(LoanSimulationEntity::class.java)
 
