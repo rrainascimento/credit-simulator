@@ -1,6 +1,7 @@
 package com.teste.creditas.credit_simulator.adapters.outbound.entity
 
 import jakarta.persistence.*
+import java.math.BigDecimal
 import java.time.LocalDate
 
 @Entity
@@ -12,7 +13,7 @@ data class LoanSimulationEntity(
     val loanAmount: Double,
     val birthDate: LocalDate,
     val months: Int,
-    val totalPayment: Double,
-    val monthlyPayment: Double,
-    val totalInterest: Double
+    val totalPayment: BigDecimal,
+    val monthlyPayment: BigDecimal,
+    val totalInterest: BigDecimal,
 )

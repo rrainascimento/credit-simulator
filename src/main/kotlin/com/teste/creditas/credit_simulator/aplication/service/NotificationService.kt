@@ -9,22 +9,26 @@ import org.springframework.stereotype.Service
 
 @Service
 class NotificationService(
-    private val emailSenderPort: EmailSenderPort
+    private val emailSenderPort: EmailSenderPort,
 ) {
-    fun sendSimulationResult(request: LoanSimulationRequest, response: LoanSimulationResponse) {
+    fun sendSimulationResult(
+        request: LoanSimulationRequest,
+        response: LoanSimulationResponse,
+    ) {
         val resumo = EmailBodyBuilder.buildSimulationSummary(request, response)
 
-        val pdf = PdfGenerator.generateSimulationPdf(
-            request,
-            response
-        )
+        val pdf =
+            PdfGenerator.generateSimulationPdf(
+                request,
+                response,
+            )
 
         emailSenderPort.sendEmail(
             to = request.email,
             subject = "Simulação de Crédito",
             body = resumo,
             attachment = pdf,
-            fileName = "simulacao_credito.pdf"
+            fileName = "simulacao_credito.pdf",
         )
     }
 }

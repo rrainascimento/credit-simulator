@@ -8,7 +8,10 @@ import com.teste.creditas.credit_simulator.domain.model.LoanSimulationResponse
 import java.io.ByteArrayOutputStream
 
 object PdfGenerator {
-    fun generateSimulationPdf(request: LoanSimulationRequest, response: LoanSimulationResponse): ByteArray {
+    fun generateSimulationPdf(
+        request: LoanSimulationRequest,
+        response: LoanSimulationResponse,
+    ): ByteArray {
         val document = Document()
         val outputStream = ByteArrayOutputStream()
         PdfWriter.getInstance(document, outputStream)

@@ -9,18 +9,21 @@ import org.springframework.stereotype.Component
 
 @Component
 class PostgreSimulationAdapter(
-    private val repository: LoanSimulationJpaRepository
+    private val repository: LoanSimulationJpaRepository,
 ) : SimulationRepositoryPort {
-
-    override fun saveSimulation(request: LoanSimulationRequest, response: LoanSimulationResponse) {
-        val entity = LoanSimulationEntity(
-            loanAmount = request.loanAmount,
-            birthDate = request.birthDate,
-            months = request.months,
-            totalPayment = response.totalPayment,
-            monthlyPayment = response.monthlyPayment,
-            totalInterest = response.totalInterest
-        )
+    override fun saveSimulation(
+        request: LoanSimulationRequest,
+        response: LoanSimulationResponse,
+    ) {
+        val entity =
+            LoanSimulationEntity(
+                loanAmount = request.loanAmount,
+                birthDate = request.birthDate,
+                months = request.months,
+                totalPayment = response.totalPayment,
+                monthlyPayment = response.monthlyPayment,
+                totalInterest = response.totalInterest,
+            )
         repository.save(entity)
     }
 }
