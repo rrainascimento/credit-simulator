@@ -14,7 +14,7 @@ data class LoanSimulationRequest(
     val loanAmount: Double,
 
     @Schema(
-        description = "Data de nascimento do cliente (formato ISO-8601)",
+        description = "Data de nascimento do cliente no formato ISO-8601 (YYYY-MM-DD)",
         example = "1995-08-20"
     )
     val birthDate: LocalDate,
@@ -25,9 +25,19 @@ data class LoanSimulationRequest(
     )
     val months: Int,
 
+    @Schema(
+        description = "Nome completo do cliente",
+        example = "Rai Nascimento"
+    )
     val name: String,
+
+    @Schema(
+        description = "Email do cliente",
+        example = "rai.nascimento@email.com"
+    )
     val email: String
 )
+
 
 @Schema(description = "Resposta com os resultados da simulação de empréstimo")
 data class LoanSimulationResponse(
@@ -48,8 +58,5 @@ data class LoanSimulationResponse(
         description = "Total de juros pagos ao longo do empréstimo",
         example = "3000.00"
     )
-    val totalInterest: Double,
-
-    val name: String,
-    val email: String
+    val totalInterest: Double
 )

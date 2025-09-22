@@ -1,7 +1,5 @@
 package com.teste.creditas.credit_simulator.aplication.service
 
-import com.teste.creditas.credit_simulator.adapters.outbound.pdf.PdfGenerator.generateSimulationPdf
-import com.teste.creditas.credit_simulator.aplication.service.port.EmailSenderPort
 import com.teste.creditas.credit_simulator.aplication.service.port.SimulationRepositoryPort
 import com.teste.creditas.credit_simulator.domain.model.LoanSimulationRequest
 import com.teste.creditas.credit_simulator.domain.model.LoanSimulationResponse

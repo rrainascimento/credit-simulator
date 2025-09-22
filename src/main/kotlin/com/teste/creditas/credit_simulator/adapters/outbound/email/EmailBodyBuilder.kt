@@ -8,7 +8,7 @@ object EmailBodyBuilder {
         request: LoanSimulationRequest,
         response: LoanSimulationResponse
     ): String = """
-        Olá, ${response.name}, tudo bem?
+        Olá, ${request.name}, tudo bem?
         
         Aqui está o resultado da sua simulação de crédito:
         
