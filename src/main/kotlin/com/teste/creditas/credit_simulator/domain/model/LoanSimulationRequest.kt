@@ -23,7 +23,10 @@ data class LoanSimulationRequest(
         description = "Prazo de pagamento em meses",
         example = "36"
     )
-    val months: Int
+    val months: Int,
+
+    val name: String,
+    val email: String
 )
 
 @Schema(description = "Resposta com os resultados da simulação de empréstimo")
@@ -45,5 +48,8 @@ data class LoanSimulationResponse(
         description = "Total de juros pagos ao longo do empréstimo",
         example = "3000.00"
     )
-    val totalInterest: Double
+    val totalInterest: Double,
+
+    val name: String,
+    val email: String
 )

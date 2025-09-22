@@ -38,7 +38,9 @@ class LoanCalculator(private val simulationRepositoryPort: SimulationRepositoryP
         return LoanSimulationResponse(
             totalPayment = round2(totalPayment),
             monthlyPayment = round2(monthlyPayment),
-            totalInterest = round2(totalInterest)
+            totalInterest = round2(totalInterest),
+            name = request.name,
+            email = request.email
         )
     }
 
