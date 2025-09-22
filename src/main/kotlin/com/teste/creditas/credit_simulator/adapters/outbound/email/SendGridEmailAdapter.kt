@@ -9,13 +9,12 @@ import org.springframework.stereotype.Component
 
 @Component
 class SendGridEmailAdapter(
-    private val env: Environment
+    private val env: Environment,
+    private val client: OkHttpClient = OkHttpClient()
 ) : EmailSenderPort {
 
     private val apiKey: String = env.getProperty("sendgrid.api.key")
         ?: throw IllegalStateException("SENDGRID_API_KEY não configurada")
-
-    private val client = OkHttpClient()
 
     override fun sendEmail(to: String, subject: String, body: String, attachment: ByteArray?, fileName: String?) {
 
