@@ -12,7 +12,7 @@ class SendGridEmailAdapter(
     private val env: Environment
 ) : EmailSenderPort {
 
-    private val apiKey: String = env.getProperty("SENDGRID_API_KEY")
+    private val apiKey: String = env.getProperty("sendgrid.api.key")
         ?: throw IllegalStateException("SENDGRID_API_KEY não configurada")
 
     private val client = OkHttpClient()
@@ -26,8 +26,6 @@ class SendGridEmailAdapter(
             .addHeader("Authorization", "Bearer $apiKey")
             .post(requestBody)
             .build()
-
-        System.out.println(apiKey)
 
         client.newCall(request).execute().use { response ->
             if (!response.isSuccessful) {
