@@ -1,12 +1,15 @@
 package com.teste.creditas.credit_simulator.domain.service
 
+import com.teste.creditas.credit_simulator.aplication.service.port.SimulationRepositoryPort
 import com.teste.creditas.credit_simulator.domain.model.LoanSimulationRequest
 import com.teste.creditas.credit_simulator.domain.model.LoanSimulationResponse
+import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.time.Period
 import kotlin.math.pow
 
-class LoanCalculator {
+@Component
+class LoanCalculator(private val simulationRepositoryPort: SimulationRepositoryPort){
 
     fun calculate(request: LoanSimulationRequest): LoanSimulationResponse {
         val age = Period.between(request.birthDate, LocalDate.now()).years
